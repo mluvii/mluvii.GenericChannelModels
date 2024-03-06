@@ -1,0 +1,13 @@
+[Bb]in/
+[Oo]bj/
+TestResults/
+packages/
+
+*.suo
+*.user
+*.Publish.xml
+_log
+
+.vs/
+
+*.lock.json
