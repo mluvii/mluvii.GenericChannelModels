@@ -18,5 +18,24 @@ namespace mluvii.GenericChannelModels.Activity
         /// </ul>
         /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// Used with:
+        /// <ul>
+        /// <li><see cref="GenericChannelActivityType.OperatorJoined"/></li>
+        /// <li><see cref="GenericChannelActivityType.OperatorLeft"/></li>
+        /// </ul>
+        /// </summary>
+        public int OperatorUserId { get; set; }
+
+        /// <summary>
+        /// <inheritdoc cref="OperatorUserId"/>
+        /// </summary>
+        public string OperatorUserFullName { get; set; }
+
+        /// <summary>
+        /// <inheritdoc cref="OperatorUserId"/>
+        /// </summary>
+        public string OperatorPfp { get; set; }
     }
 }
