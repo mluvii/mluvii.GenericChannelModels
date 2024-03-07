@@ -34,7 +34,7 @@ namespace mluvii.GenericChannelModels.Activity
         /// <li><see cref="GenericChannelActivityType.OperatorLeft"/></li>
         /// </ul>
         /// </summary>
-        public int OperatorUserId { get; set; }
+        public int? OperatorUserId { get; set; }
 
         /// <summary>
         /// <inheritdoc cref="OperatorUserId"/>
