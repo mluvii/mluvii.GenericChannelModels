@@ -8,6 +8,58 @@ To add this repository as a submodule, execute following command in directory of
 git submodule add git@github.com:mluvii/mluvii.GenericChannelModels.git
 ``
 
+## Integration
+
+Communication between mluvii and generic channel implementation is as follows:
+
+### Initial registration
+
+```mermaid
+sequenceDiagram
+    participant GenericChannelImplementation
+    participant mluvii
+
+    mluvii ->> mluvii: register generic channel
+    mluvii ->> +GenericChannelImplementation: POST /webhook GenericChannelWebhookRegistrationModel
+    GenericChannelImplementation ->> GenericChannelImplementation: save(webhookUrl, webhookHeaders)
+    GenericChannelImplementation -->> -mluvii: HTTP 2XX
+```
+
+### Chat
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant GenericChannelImplementation
+    participant mluvii
+    actor Agent
+
+    note over Client,Agent: Client's message
+    loop buffering (optional)
+    Client ->> GenericChannelImplementation: text message
+    activate GenericChannelImplementation
+    GenericChannelImplementation -->> Client: sent
+    end
+    GenericChannelImplementation ->> mluvii: POST {{ webhookUrl }} GenericChannelWebhookPayload
+    activate mluvii
+    note over GenericChannelImplementation,mluvii: request contains {{ webhookHeaders }}
+    mluvii -->> GenericChannelImplementation: HTTP 204
+    deactivate GenericChannelImplementation
+    loop buffered messages (optional)
+    mluvii ->> Agent: client's message
+    end
+    deactivate mluvii
+    note over Client,Agent: Agent's reply
+    Agent ->> mluvii: reply
+    activate mluvii
+    mluvii ->> GenericChannelImplementation: POST /activity GenericChannelActivity
+    activate GenericChannelImplementation
+    GenericChannelImplementation -->> mluvii: HTTP 200 GenericChannelActivityResponse
+    deactivate mluvii
+    GenericChannelImplementation ->> Client: message
+    deactivate GenericChannelImplementation
+```
+
 ## Serialization
 ### Enumerations
 All enumerations must be sent as strings. Special value UNKNOWN must be avoided as it is only used for deserialization.
