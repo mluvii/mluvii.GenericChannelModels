@@ -1,0 +1,38 @@
+name: Contract NuGet
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-push:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '6.0'
+
+    - name: Restore dependencies
+      run: dotnet restore mluvii.GenericChannelModels.csproj
+
+    - name: Build
+      run: dotnet build mluvii.GenericChannelModels.csproj --configuration Release --no-restore
+
+    - name: Pack
+      run: dotnet pack mluvii.GenericChannelModels.csproj --no-build --configuration Release /p:PackageVersion=1.${{ github.run_number }} -o nupkg
+
+    # List files in the package directory
+    - name: List files in the nupkg directory
+      run: ls nupkg
+
+    # Push NuGet Package
+    - name: Push to nugetorg
+      run: Get-ChildItem nupkg -Filter *.nupkg | Foreach-Object { dotnet nuget push $_.FullName --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate }
+
+    - name: Push github nuget
+      run: Get-ChildItem nupkg -Filter *.nupkg | Foreach-Object { dotnet nuget push $_.FullName --source https://nuget.pkg.github.com/mluvii/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate }
