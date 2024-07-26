@@ -5,6 +5,7 @@ namespace mluvii.GenericChannelModels.Activity
         UNKNOWN = 0,
         ChatMessage,
         OperatorJoined,
-        OperatorLeft
+        OperatorLeft,
+        GuestLeft
     }
 }
